@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: market-backtester
+Version: 0.1.0
+Summary: A financial market backtesting engine written in Python
+Requires-Python: >=3.11
+Requires-Dist: numpy
+Requires-Dist: pandas
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"

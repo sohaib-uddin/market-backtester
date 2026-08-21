@@ -21,6 +21,24 @@ The project will progressively implement:
 
 Market Data → Strategy → Signals → Orders → Execution → Portfolio → Performance
 
+## Current Features
+
+- Immutable OHLCV market bars
+- Validation of symbols, prices, and volume
+- Consistent ticker-symbol normalisation
+- Chronologically ordered historical data feeds
+- Duplicate bar detection
+- Multi-asset symbol filtering
+- Inclusive date-range filtering
+- Automated tests for market-data behaviour
+
+## Development Approach
+
+The engine is being developed in tested, feature-complete milestones. Core
+simulation correctness will be established before adding data-provider
+integrations and the graphical interface.
+
 ## Status
 
-Early development.
+Historical market-data foundation complete. Execution, portfolio accounting,
+strategy configuration, analytics, and the user interface are in development.

@@ -13,6 +13,11 @@ from backtester import (
     PositionView,
     Strategy,
     StrategyContext,
+    BarInterval,
+    CSVBarLoader,
+    CSVBarWriter,
+    HistoricalDataCache,
+    HistoricalDataRequest,
     )
 
 
@@ -31,3 +36,8 @@ def test_public_api_exposes_core_components():
     assert PositionView is not None
     assert Strategy is not None
     assert StrategyContext is not None
+    assert BarInterval is not None
+    assert CSVBarLoader is not None
+    assert CSVBarWriter is not None
+    assert HistoricalDataCache is not None
+    assert HistoricalDataRequest is not None

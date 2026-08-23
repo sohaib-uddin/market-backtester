@@ -12,6 +12,15 @@ from backtester.strategy import (
 from backtester.execution import ExecutionModel, Fill
 from backtester.orders import Order, OrderSide
 from backtester.portfolio import Portfolio, Position
+from backtester.cache import (
+    BarInterval,
+    HistoricalDataCache,
+    HistoricalDataRequest,
+)
+from backtester.loaders import (
+    CSVBarLoader,
+    CSVBarWriter,
+)
 
 
 __all__ = [
@@ -29,4 +38,9 @@ __all__ = [
     "PositionView",
     "Strategy",
     "StrategyContext",
+    "BarInterval",
+    "CSVBarLoader",
+    "CSVBarWriter",
+    "HistoricalDataCache",
+    "HistoricalDataRequest",
 ]

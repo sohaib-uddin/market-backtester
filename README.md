@@ -47,6 +47,13 @@ Market Data → Strategy → Signals → Orders → Execution → Portfolio → 
 - Equity-curve recording
 - Filled and unfilled order tracking
 - Repeatable backtests with isolated run state
+- Validated CSV historical-data loading
+- Chronological restoration of unordered input data
+- Timezone-aware timestamp preservation
+- Atomic CSV cache writing
+- Request-specific historical data caching
+- Cache integrity checks for symbols and date ranges
+- Configurable minute, hourly, and daily intervals
 
 ## Execution Assumptions
 
@@ -75,6 +82,25 @@ are applied when the queued order is filled.
 Orders generated from the final bar remain unfilled because no future market
 bar exists on which to execute them.
 
+## Historical Data Storage
+
+Historical bars can be loaded from standard CSV files containing:
+
+- `timestamp`
+- `symbol`
+- `open`
+- `high`
+- `low`
+- `close`
+- `volume`
+
+Downloaded datasets can be cached locally using request-specific filenames.
+Cache identity includes the symbol, bar interval, start time, and end time.
+
+Files are written atomically through a temporary file, reducing the risk of
+leaving corrupted or partially written datasets. Data is validated again when
+loaded, so cached files cannot bypass the engine's market-data rules.
+
 ## Development Approach
 
 The engine is being developed in tested, feature-complete milestones. Core
@@ -83,6 +109,9 @@ integrations and the graphical interface.
 
 ## Status
 
-The historical data, execution, portfolio-accounting, and event-driven
-simulation foundations are complete. The next milestone adds reliable
-historical data loading, validation, and local caching.
+The simulation engine now includes validated market data, execution,
+portfolio accounting, event-driven processing, CSV ingestion, and local
+historical-data caching.
+
+The next milestone adds a provider-independent data service and integration
+with a free historical market-data source.

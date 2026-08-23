@@ -23,3 +23,5 @@ Thumbs.db
 # Local market data
 data/*
 !data/.gitkeep
+
+.pytest_tmp/

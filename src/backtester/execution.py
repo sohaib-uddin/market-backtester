@@ -97,18 +97,48 @@ class ExecutionModel:
         if value < 0:
             raise ValueError(f"{name} must not be negative")
 
-    def execute(self, order: Order, bar: Bar) -> Fill:
+    def execute(
+        self,
+        order: Order,
+        bar: Bar,
+        *,
+        reference_price: float | None = None,
+    ) -> Fill:
         if order.symbol != bar.symbol:
             raise ValueError(
                 "order symbol must match the market bar symbol"
             )
 
+        if reference_price is None:
+            base_price = bar.close
+        else:
+            base_price = reference_price
+
+        if isinstance(base_price, bool):
+            raise TypeError(
+                "reference_price must be a number"
+            )
+
+        if not isinstance(base_price, Real):
+            raise TypeError(
+                "reference_price must be a number"
+            )
+
+        if not isfinite(base_price) or base_price <= 0:
+            raise ValueError(
+                "reference_price must be positive and finite"
+            )
+
         slippage_rate = self.slippage_bps / 10_000
 
         if order.side is OrderSide.BUY:
-            execution_price = bar.close * (1 + slippage_rate)
+            execution_price = (
+                base_price * (1 + slippage_rate)
+            )
         else:
-            execution_price = bar.close * (1 - slippage_rate)
+            execution_price = (
+                base_price * (1 - slippage_rate)
+            )
 
         if execution_price <= 0:
             raise ValueError(

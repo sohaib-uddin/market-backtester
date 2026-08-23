@@ -40,6 +40,13 @@ Market Data → Strategy → Signals → Orders → Execution → Portfolio → 
 - Realised and unrealised profit calculation
 - Portfolio market value, equity, and total profit
 - Protection against overspending and unsupported short selling
+- Event-driven historical simulation
+- Next-bar-open order execution
+- Protection against same-bar look-ahead bias
+- Read-only strategy context and historical observations
+- Equity-curve recording
+- Filled and unfilled order tracking
+- Repeatable backtests with isolated run state
 
 ## Execution Assumptions
 
@@ -55,6 +62,19 @@ The current portfolio supports long positions. Short selling will only be
 introduced when borrowing costs, margin requirements, and short-position
 accounting can be modelled correctly.
 
+## Simulation Timing
+
+Strategies receive each completed historical bar in chronological order. Orders
+generated from that bar are queued and executed using the opening price of the
+next available bar for the same symbol.
+
+This timing model prevents a strategy from observing a closing price and then
+unrealistically executing at that already-known price. Commission and slippage
+are applied when the queued order is filled.
+
+Orders generated from the final bar remain unfilled because no future market
+bar exists on which to execute them.
+
 ## Development Approach
 
 The engine is being developed in tested, feature-complete milestones. Core
@@ -63,6 +83,6 @@ integrations and the graphical interface.
 
 ## Status
 
-The historical market-data, execution, and portfolio-accounting foundations
-are complete. The next milestone connects these components through the
-event-driven simulation engine.
+The historical data, execution, portfolio-accounting, and event-driven
+simulation foundations are complete. The next milestone adds reliable
+historical data loading, validation, and local caching.

@@ -8,7 +8,12 @@ from backtester import (
     OrderSide,
     Portfolio,
     Position,
-)
+    BacktestResult,
+    EquityPoint,
+    PositionView,
+    Strategy,
+    StrategyContext,
+    )
 
 
 def test_public_api_exposes_core_components():
@@ -21,3 +26,8 @@ def test_public_api_exposes_core_components():
     assert ExecutionModel is not None
     assert Portfolio is not None
     assert Position is not None
+    assert BacktestResult is not None
+    assert EquityPoint is not None
+    assert PositionView is not None
+    assert Strategy is not None
+    assert StrategyContext is not None

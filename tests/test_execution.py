@@ -157,3 +157,33 @@ def test_execution_rejects_order_for_different_symbol():
 
     with pytest.raises(ValueError, match="symbol"):
         model.execute(order, bar)
+
+def test_execution_model_accepts_explicit_reference_price():
+    model = ExecutionModel(
+        commission_per_order=1.0,
+        slippage_bps=10.0,
+    )
+
+    bar = Bar(
+        symbol="AAPL",
+        timestamp=datetime(2025, 1, 3, 9, 31),
+        open=105.0,
+        high=111.0,
+        low=104.0,
+        close=110.0,
+        volume=10_000,
+    )
+
+    order = Order(
+        symbol="AAPL",
+        quantity=10,
+        side=OrderSide.BUY,
+    )
+
+    fill = model.execute(
+        order,
+        bar,
+        reference_price=bar.open,
+    )
+
+    assert fill.price == pytest.approx(105.105)

@@ -32,6 +32,29 @@ Market Data → Strategy → Signals → Orders → Execution → Portfolio → 
 - Inclusive date-range filtering
 - Automated tests for market-data behaviour
 
+- Validated buy and sell orders
+- Simulated fills using configurable commission and slippage
+- Cash and long-position accounting
+- Commission-aware average entry prices
+- Partial and complete position closing
+- Realised and unrealised profit calculation
+- Portfolio market value, equity, and total profit
+- Protection against overspending and unsupported short selling
+
+## Execution Assumptions
+
+Orders are currently filled using the closing price of the market bar being
+processed. The execution model can apply configurable slippage in basis points
+and a fixed commission per order.
+
+Buy orders receive a higher simulated execution price and sell orders receive
+a lower simulated execution price. These conservative assumptions reduce the
+risk of overstating strategy performance.
+
+The current portfolio supports long positions. Short selling will only be
+introduced when borrowing costs, margin requirements, and short-position
+accounting can be modelled correctly.
+
 ## Development Approach
 
 The engine is being developed in tested, feature-complete milestones. Core
@@ -40,5 +63,6 @@ integrations and the graphical interface.
 
 ## Status
 
-Historical market-data foundation complete. Execution, portfolio accounting,
-strategy configuration, analytics, and the user interface are in development.
+The historical market-data, execution, and portfolio-accounting foundations
+are complete. The next milestone connects these components through the
+event-driven simulation engine.

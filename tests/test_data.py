@@ -273,3 +273,58 @@ def test_feed_rejects_reversed_date_range():
             start=datetime(2025, 1, 3),
             end=datetime(2025, 1, 2),
         )
+
+@pytest.mark.parametrize(
+    "close_price",
+    [
+        float("nan"),
+        float("inf"),
+        float("-inf"),
+    ],
+)
+def test_bar_rejects_non_finite_prices(
+    close_price,
+):
+    with pytest.raises(ValueError, match="close"):
+        Bar(
+            symbol="AAPL",
+            timestamp=datetime(2025, 1, 2),
+            open=100.0,
+            high=105.0,
+            low=95.0,
+            close=close_price,
+            volume=1_000,
+        )
+
+
+def test_bar_rejects_non_datetime_timestamp():
+    with pytest.raises(TypeError, match="timestamp"):
+        Bar(
+            symbol="AAPL",
+            timestamp="2025-01-02",
+            open=100.0,
+            high=105.0,
+            low=95.0,
+            close=102.0,
+            volume=1_000,
+        )
+
+
+@pytest.mark.parametrize(
+    "volume",
+    [
+        True,
+        1.5,
+    ],
+)
+def test_bar_rejects_non_integer_volume(volume):
+    with pytest.raises(TypeError, match="volume"):
+        Bar(
+            symbol="AAPL",
+            timestamp=datetime(2025, 1, 2),
+            open=100.0,
+            high=105.0,
+            low=95.0,
+            close=102.0,
+            volume=volume,
+        )

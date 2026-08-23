@@ -22,6 +22,14 @@ from backtester.loaders import (
     CSVBarWriter,
 )
 
+from backtester.providers import (
+    HistoricalDataProvider,
+    YahooFinanceProvider,
+)
+from backtester.services import (
+    HistoricalDataService,
+)
+
 
 __all__ = [
     "BacktestEngine",
@@ -43,4 +51,7 @@ __all__ = [
     "CSVBarWriter",
     "HistoricalDataCache",
     "HistoricalDataRequest",
+    "HistoricalDataProvider",
+    "HistoricalDataService",
+    "YahooFinanceProvider",
 ]

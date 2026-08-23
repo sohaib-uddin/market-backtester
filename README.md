@@ -54,6 +54,11 @@ Market Data → Strategy → Signals → Orders → Execution → Portfolio → 
 - Request-specific historical data caching
 - Cache integrity checks for symbols and date ranges
 - Configurable minute, hourly, and daily intervals
+- Provider-independent historical-data architecture
+- Free Yahoo Finance historical-data integration
+- Automatic price-repair support
+- Cache-first retrieval with optional refresh
+- Offline, deterministic provider tests
 
 ## Execution Assumptions
 
@@ -101,6 +106,29 @@ Files are written atomically through a temporary file, reducing the risk of
 leaving corrupted or partially written datasets. Data is validated again when
 loaded, so cached files cannot bypass the engine's market-data rules.
 
+## Free Market Data
+
+The initial provider adapter uses `yfinance`, which requires no API key and is
+suitable for personal research and educational use.
+
+Daily data supports long historical ranges. Intraday data availability is more
+limited; the provider currently restricts intraday history to approximately
+the most recent 60 days. The application will communicate these limitations
+through its interface.
+
+The provider layer is replaceable. Alternative free or licensed providers can
+be added without changing strategies, portfolio accounting, or the simulation
+engine.
+
+Price repair is enabled to help detect and correct certain missing values,
+currency-unit errors, and split-related inconsistencies. Downloaded data still
+passes through the engine's own validation before it can be cached or used.
+
+Provider documentation:
+
+- [yfinance documentation](https://ranaroussi.github.io/yfinance/)
+- [yfinance download API](https://ranaroussi.github.io/yfinance/reference/api/yfinance.download.html)
+
 ## Development Approach
 
 The engine is being developed in tested, feature-complete milestones. Core
@@ -109,9 +137,9 @@ integrations and the graphical interface.
 
 ## Status
 
-The simulation engine now includes validated market data, execution,
-portfolio accounting, event-driven processing, CSV ingestion, and local
-historical-data caching.
+The complete historical-data pipeline is operational: free provider download,
+validation, chronological normalization, local caching, and event-driven
+simulation.
 
-The next milestone adds a provider-independent data service and integration
-with a free historical market-data source.
+The next milestone introduces configurable strategy parameters and built-in
+example strategies.

@@ -18,6 +18,9 @@ from backtester import (
     CSVBarWriter,
     HistoricalDataCache,
     HistoricalDataRequest,
+    HistoricalDataProvider,
+    HistoricalDataService,
+    YahooFinanceProvider,
     )
 
 
@@ -41,3 +44,6 @@ def test_public_api_exposes_core_components():
     assert CSVBarWriter is not None
     assert HistoricalDataCache is not None
     assert HistoricalDataRequest is not None
+    assert HistoricalDataProvider is not None
+    assert HistoricalDataService is not None
+    assert YahooFinanceProvider is not None

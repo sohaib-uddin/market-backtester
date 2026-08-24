@@ -43,6 +43,15 @@ from backtester.strategies import (
     MovingAverageCrossoverStrategy,
     create_default_strategy_registry,
 )
+from backtester.analytics import (
+    BacktestAnalyser,
+    BacktestAnalysis,
+    BenchmarkComparison,
+    PerformanceAnalyzer,
+    PerformanceReport,
+    TradeAnalyzer,
+    TradeReport,
+)
 
 
 __all__ = [
@@ -76,4 +85,11 @@ __all__ = [
     "StrategyParameter",
     "StrategyRegistry",
     "create_default_strategy_registry",
+    "BacktestAnalyser",
+    "BacktestAnalysis",
+    "BenchmarkComparison",
+    "PerformanceAnalyzer",
+    "PerformanceReport",
+    "TradeAnalyzer",
+    "TradeReport",
 ]

@@ -65,6 +65,15 @@ Market Data → Strategy → Signals → Orders → Execution → Portfolio → 
 - Extensible strategy registry
 - Configurable buy-and-hold benchmark
 - Configurable moving-average crossover strategy
+- Period and annualised return calculation
+- Annualised volatility and Sharpe ratio
+- Downside deviation and Sortino ratio
+- Maximum drawdown and Calmar ratio
+- Trade win rate and profit factor
+- Average, largest winning, and largest losing trades
+- Commission totals
+- Strategy-versus-benchmark comparison
+- Dashboard-ready combined analysis reports
 
 ## Execution Assumptions
 
@@ -165,6 +174,23 @@ Compares configurable short and long moving averages. It enters when the short
 average is above the long average and exits when the relationship reverses.
 Orders continue to follow next-bar execution timing.
 
+## Performance and Risk Analytics
+
+Backtest results can be converted into a combined analysis containing
+portfolio-level performance and trade-level statistics.
+
+The performance report includes total and annualised return, annualised
+volatility, Sharpe ratio, downside deviation, Sortino ratio, maximum drawdown,
+and Calmar ratio. Annualisation is configurable so daily and intraday
+backtests can use appropriate observation frequencies.
+
+The trade report reconstructs commission-adjusted trade outcomes from fills
+and reports win rate, gross profit, gross loss, net realised profit, average
+trade, largest win and loss, profit factor, and total commission.
+
+Strategies can also be compared with a benchmark using both excess return and
+relative compounded return.
+
 ## Development Approach
 
 The engine is being developed in tested, feature-complete milestones. Core
@@ -173,8 +199,9 @@ integrations and the graphical interface.
 
 ## Status
 
-The engine now supports free historical data, caching, realistic event timing,
-portfolio accounting, and interface-ready configurable strategies.
+The historical simulation and analytics pipeline is complete from free data
+download through strategy execution, portfolio accounting, and performance
+reporting.
 
-The next milestone adds performance and risk analytics, including drawdown,
-volatility, Sharpe ratio, trade statistics, and benchmark comparison.
+The next milestone adds configurable position sizing and risk controls before
+the graphical interface is introduced.

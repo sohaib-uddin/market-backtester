@@ -29,6 +29,13 @@ from backtester import (
     StrategyParameter,
     StrategyRegistry,
     create_default_strategy_registry,
+    BacktestAnalyser,
+    BacktestAnalysis,
+    BenchmarkComparison,
+    PerformanceAnalyzer,
+    PerformanceReport,
+    TradeAnalyzer,
+    TradeReport,
     )
 
 
@@ -63,3 +70,10 @@ def test_public_api_exposes_core_components():
     assert StrategyParameter is not None
     assert StrategyRegistry is not None
     assert create_default_strategy_registry is not None
+    assert BacktestAnalyser is not None
+    assert BacktestAnalysis is not None
+    assert BenchmarkComparison is not None
+    assert PerformanceAnalyzer is not None
+    assert PerformanceReport is not None
+    assert TradeAnalyzer is not None
+    assert TradeReport is not None

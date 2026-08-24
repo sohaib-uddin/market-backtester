@@ -12,12 +12,23 @@ from backtester.strategy import (
     Strategy,
     StrategyContext,
 )
+from backtester.risk import (
+    RiskManager,
+    RiskViolation,
+)
 
 
 @dataclass(frozen=True)
 class EquityPoint:
     timestamp: datetime
     equity: float
+
+@dataclass(frozen=True)
+class RejectedOrder:
+    order: Order
+    attempted_fill: Fill
+    timestamp: datetime
+    reason: str
 
 
 @dataclass(frozen=True)
@@ -30,6 +41,11 @@ class BacktestResult:
     unfilled_orders: int
     equity_curve: tuple[EquityPoint, ...]
     fill_history: tuple[Fill, ...]
+    rejected_orders: int = 0
+    rejection_history: tuple[
+        RejectedOrder,
+        ...,
+    ] = ()
 
 
 class BacktestEngine:
@@ -38,6 +54,7 @@ class BacktestEngine:
         *,
         initial_cash: float = 100_000.0,
         execution_model: ExecutionModel | None = None,
+        risk_manager: RiskManager | None = None,
     ):
         self.initial_cash = initial_cash
         self.execution_model = (
@@ -45,6 +62,20 @@ class BacktestEngine:
             if execution_model is not None
             else ExecutionModel()
         )
+        self.risk_manager = (
+            risk_manager
+            if risk_manager is not None
+            else RiskManager()
+        )
+
+        if not isinstance(
+            self.risk_manager,
+            RiskManager,
+        ):
+            raise TypeError(
+                "risk_manager must be a "
+                "RiskManager"
+            )
         self.current_time: datetime | None = None
 
     def run(
@@ -65,6 +96,9 @@ class BacktestEngine:
 
         equity_curve: list[EquityPoint] = []
         fill_history: list[Fill] = []
+        rejection_history: list[
+            RejectedOrder
+        ] = []
         orders_submitted = 0
 
         for bar in feed:
@@ -82,7 +116,37 @@ class BacktestEngine:
                     reference_price=bar.open,
                 )
 
-                portfolio.apply_fill(fill)
+                valuation_prices = dict(
+                    latest_prices
+                )
+
+                valuation_prices[bar.symbol] = (
+                    bar.open
+                )
+
+                try:
+                    self.risk_manager.validate_fill(
+                        fill=fill,
+                        portfolio=portfolio,
+                        current_prices=(
+                            valuation_prices
+                        ),
+                    )
+
+                    portfolio.apply_fill(fill)
+
+                except RiskViolation as error:
+                    rejection_history.append(
+                        RejectedOrder(
+                            order=order,
+                            attempted_fill=fill,
+                            timestamp=bar.timestamp,
+                            reason=str(error),
+                        )
+                    )
+
+                    continue
+
                 fill_history.append(fill)
 
             latest_prices[bar.symbol] = bar.close
@@ -176,4 +240,10 @@ class BacktestEngine:
             unfilled_orders=unfilled_orders,
             equity_curve=tuple(equity_curve),
             fill_history=tuple(fill_history),
+            rejected_orders=len(
+                rejection_history
+            ),
+            rejection_history=tuple(
+                rejection_history
+            ),
         )

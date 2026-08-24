@@ -74,6 +74,12 @@ Market Data → Strategy → Signals → Orders → Execution → Portfolio → 
 - Commission totals
 - Strategy-versus-benchmark comparison
 - Dashboard-ready combined analysis reports
+- Configurable maximum order size
+- Configurable maximum position concentration
+- Configurable minimum cash reserve
+- Risk validation using actual simulated fill prices
+- Recorded order rejections with reasons
+- Non-fatal risk violations during backtests
 
 ## Execution Assumptions
 
@@ -191,6 +197,21 @@ trade, largest win and loss, profit factor, and total commission.
 Strategies can also be compared with a benchmark using both excess return and
 relative compounded return.
 
+## Portfolio Risk Controls
+
+The engine can enforce portfolio-level limits before applying a simulated buy
+fill. Available controls include maximum order value, maximum position
+concentration, and minimum cash reserves, each expressed as a percentage of
+current portfolio equity.
+
+Risk checks use the actual simulated execution price after slippage rather than
+the earlier signal price. This means a market gap can cause an order to be
+rejected even if it appeared acceptable when the strategy generated it.
+
+Rejected orders do not terminate the backtest or disappear silently. Results
+record the original order, attempted fill, timestamp, and human-readable
+rejection reason for later review in the interface.
+
 ## Development Approach
 
 The engine is being developed in tested, feature-complete milestones. Core
@@ -199,9 +220,9 @@ integrations and the graphical interface.
 
 ## Status
 
-The historical simulation and analytics pipeline is complete from free data
-download through strategy execution, portfolio accounting, and performance
-reporting.
+The complete research engine now covers historical data, realistic event
+timing, execution costs, portfolio accounting, configurable strategies,
+performance analytics, benchmark comparison, and portfolio risk controls.
 
-The next milestone adds configurable position sizing and risk controls before
-the graphical interface is introduced.
+The next milestone introduces the graphical interface and connects its controls
+to data requests, strategies, execution assumptions, and risk limits.

@@ -36,6 +36,10 @@ from backtester import (
     PerformanceReport,
     TradeAnalyzer,
     TradeReport,
+    RejectedOrder,
+    RiskLimits,
+    RiskManager,
+    RiskViolation,
     )
 
 
@@ -77,3 +81,7 @@ def test_public_api_exposes_core_components():
     assert PerformanceReport is not None
     assert TradeAnalyzer is not None
     assert TradeReport is not None
+    assert RejectedOrder is not None
+    assert RiskLimits is not None
+    assert RiskManager is not None
+    assert RiskViolation is not None

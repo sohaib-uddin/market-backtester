@@ -7,6 +7,10 @@ from backtester.data import Bar, HistoricalDataFeed
 from backtester.orders import Order, OrderSide
 from backtester.strategy import Strategy
 from backtester.execution import ExecutionModel
+from backtester.risk import (
+    RiskLimits,
+    RiskManager,
+)
 
 def test_engine_initialises():
     engine = BacktestEngine()
@@ -211,3 +215,52 @@ def test_empty_run_clears_previous_engine_time():
     )
 
     assert engine.current_time is None
+
+def test_engine_records_risk_rejected_fill():
+    feed = HistoricalDataFeed(
+        [
+            Bar(
+                symbol="AAPL",
+                timestamp=datetime(2025, 1, 2),
+                open=100.0,
+                high=101.0,
+                low=99.0,
+                close=100.0,
+                volume=1_000,
+            ),
+            Bar(
+                symbol="AAPL",
+                timestamp=datetime(2025, 1, 3),
+                open=100.0,
+                high=101.0,
+                low=99.0,
+                close=100.0,
+                volume=1_000,
+            ),
+        ]
+    )
+
+    engine = BacktestEngine(
+        initial_cash=10_000.0,
+        risk_manager=RiskManager(
+            RiskLimits(
+                maximum_position_percentage=5.0,
+            )
+        ),
+    )
+
+    result = engine.run(
+        feed=feed,
+        strategy=BuyOnceStrategy(),
+    )
+
+    assert result.orders_submitted == 1
+    assert result.fills == 0
+    assert result.rejected_orders == 1
+
+    rejection = result.rejection_history[0]
+
+    assert rejection.order.symbol == "AAPL"
+    assert rejection.attempted_fill.price == 100.0
+    assert "position" in rejection.reason
+    assert result.final_equity == 10_000.0

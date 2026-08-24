@@ -3,6 +3,7 @@ from backtester.engine import (
     BacktestEngine,
     BacktestResult,
     EquityPoint,
+    RejectedOrder,
 )
 from backtester.strategy import (
     PositionView,
@@ -52,6 +53,11 @@ from backtester.analytics import (
     TradeAnalyzer,
     TradeReport,
 )
+from backtester.risk import (
+    RiskLimits,
+    RiskManager,
+    RiskViolation,
+)
 
 
 __all__ = [
@@ -92,4 +98,8 @@ __all__ = [
     "PerformanceReport",
     "TradeAnalyzer",
     "TradeReport",
+    "RejectedOrder",
+    "RiskLimits",
+    "RiskManager",
+    "RiskViolation",
 ]

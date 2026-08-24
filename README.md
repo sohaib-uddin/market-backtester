@@ -59,6 +59,12 @@ Market Data → Strategy → Signals → Orders → Execution → Portfolio → 
 - Automatic price-repair support
 - Cache-first retrieval with optional refresh
 - Offline, deterministic provider tests
+- Typed and validated strategy parameters
+- Automatic parameter defaults and range checks
+- Interface-ready strategy metadata
+- Extensible strategy registry
+- Configurable buy-and-hold benchmark
+- Configurable moving-average crossover strategy
 
 ## Execution Assumptions
 
@@ -129,6 +135,36 @@ Provider documentation:
 - [yfinance documentation](https://ranaroussi.github.io/yfinance/)
 - [yfinance download API](https://ranaroussi.github.io/yfinance/reference/api/yfinance.download.html)
 
+## Configurable Strategies
+
+Strategies describe their own user-adjustable parameters through typed schemas.
+Each parameter can define:
+
+- A machine-readable key
+- A user-facing label and description
+- An integer, decimal, boolean, or choice type
+- A default value
+- Minimum and maximum values
+- An input step size
+- Available choices
+
+The graphical interface will use this metadata to generate appropriate controls
+automatically. Adding a strategy therefore does not require rewriting the
+interface.
+
+The built-in strategies currently include:
+
+### Buy and Hold
+
+Purchases a configurable number of shares near the beginning of the backtest
+and holds them as a performance benchmark.
+
+### Moving Average Crossover
+
+Compares configurable short and long moving averages. It enters when the short
+average is above the long average and exits when the relationship reverses.
+Orders continue to follow next-bar execution timing.
+
 ## Development Approach
 
 The engine is being developed in tested, feature-complete milestones. Core
@@ -137,9 +173,8 @@ integrations and the graphical interface.
 
 ## Status
 
-The complete historical-data pipeline is operational: free provider download,
-validation, chronological normalization, local caching, and event-driven
-simulation.
+The engine now supports free historical data, caching, realistic event timing,
+portfolio accounting, and interface-ready configurable strategies.
 
-The next milestone introduces configurable strategy parameters and built-in
-example strategies.
+The next milestone adds performance and risk analytics, including drawdown,
+volatility, Sharpe ratio, trade statistics, and benchmark comparison.

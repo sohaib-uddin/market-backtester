@@ -21,6 +21,14 @@ from backtester import (
     HistoricalDataProvider,
     HistoricalDataService,
     YahooFinanceProvider,
+    BuyAndHoldStrategy,
+    MovingAverageCrossoverStrategy,
+    ParameterKind,
+    ParameterSchema,
+    StrategyDefinition,
+    StrategyParameter,
+    StrategyRegistry,
+    create_default_strategy_registry,
     )
 
 
@@ -47,3 +55,11 @@ def test_public_api_exposes_core_components():
     assert HistoricalDataProvider is not None
     assert HistoricalDataService is not None
     assert YahooFinanceProvider is not None
+    assert BuyAndHoldStrategy is not None
+    assert MovingAverageCrossoverStrategy is not None
+    assert ParameterKind is not None
+    assert ParameterSchema is not None
+    assert StrategyDefinition is not None
+    assert StrategyParameter is not None
+    assert StrategyRegistry is not None
+    assert create_default_strategy_registry is not None

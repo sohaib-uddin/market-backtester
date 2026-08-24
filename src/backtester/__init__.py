@@ -29,6 +29,20 @@ from backtester.providers import (
 from backtester.services import (
     HistoricalDataService,
 )
+from backtester.parameters import (
+    ParameterKind,
+    ParameterSchema,
+    StrategyParameter,
+)
+from backtester.registry import (
+    StrategyDefinition,
+    StrategyRegistry,
+)
+from backtester.strategies import (
+    BuyAndHoldStrategy,
+    MovingAverageCrossoverStrategy,
+    create_default_strategy_registry,
+)
 
 
 __all__ = [
@@ -54,4 +68,12 @@ __all__ = [
     "HistoricalDataProvider",
     "HistoricalDataService",
     "YahooFinanceProvider",
+    "BuyAndHoldStrategy",
+    "MovingAverageCrossoverStrategy",
+    "ParameterKind",
+    "ParameterSchema",
+    "StrategyDefinition",
+    "StrategyParameter",
+    "StrategyRegistry",
+    "create_default_strategy_registry",
 ]

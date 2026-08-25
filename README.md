@@ -226,3 +226,24 @@ performance analytics, benchmark comparison, and portfolio risk controls.
 
 The next milestone introduces the graphical interface and connects its controls
 to data requests, strategies, execution assumptions, and risk limits.
+
+## Interactive Dashboard
+
+The project includes a Streamlit interface for configuring and running historical backtests without editing Python code.
+
+The dashboard allows users to configure:
+
+- Instruments across equities, ETFs, foreign exchange, futures, indices and cryptocurrency
+- Historical date ranges and bar intervals
+- Trading strategies and their parameters
+- Initial capital
+- Commission and slippage
+- Position, order and cash risk limits
+- Instrument contract multipliers
+
+Results include final equity, total return, maximum drawdown, Sharpe ratio, completed trades, rejected orders and an interactive candlestick chart.
+
+Run the dashboard from the project directory:
+
+```powershell
+python -m streamlit run app.py

@@ -264,3 +264,60 @@ def test_engine_records_risk_rejected_fill():
     assert rejection.attempted_fill.price == 100.0
     assert "position" in rejection.reason
     assert result.final_equity == 10_000.0
+
+def test_engine_applies_instrument_multiplier():
+    feed = HistoricalDataFeed(
+        [
+            Bar(
+                symbol="GC=F",
+                timestamp=datetime(2025, 1, 2),
+                open=2_000.0,
+                high=2_001.0,
+                low=1_999.0,
+                close=2_000.0,
+                volume=1_000,
+            ),
+            Bar(
+                symbol="GC=F",
+                timestamp=datetime(2025, 1, 3),
+                open=2_000.0,
+                high=2_006.0,
+                low=1_999.0,
+                close=2_005.0,
+                volume=1_000,
+            ),
+            Bar(
+                symbol="GC=F",
+                timestamp=datetime(2025, 1, 4),
+                open=2_010.0,
+                high=2_011.0,
+                low=2_009.0,
+                close=2_010.0,
+                volume=1_000,
+            ),
+        ]
+    )
+
+    engine = BacktestEngine(
+        initial_cash=3_000_000.0,
+        contract_multipliers={
+            "GC=F": 100.0,
+        },
+    )
+
+    result = engine.run(
+        feed=feed,
+        strategy=BuyOnceStrategy(),
+    )
+
+    assert result.fills == 1
+
+    assert (
+        result.fill_history[0]
+        .contract_multiplier
+        == 100.0
+    )
+
+    assert result.final_equity == (
+        pytest.approx(3_010_000.0)
+    )

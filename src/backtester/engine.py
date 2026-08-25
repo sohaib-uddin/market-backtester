@@ -16,6 +16,9 @@ from backtester.risk import (
     RiskManager,
     RiskViolation,
 )
+from collections.abc import Mapping
+from math import isfinite
+from numbers import Real
 
 
 @dataclass(frozen=True)
@@ -54,14 +57,66 @@ class BacktestEngine:
         *,
         initial_cash: float = 100_000.0,
         execution_model: ExecutionModel | None = None,
+        contract_multipliers: Mapping[
+            str,
+            float,
+        ] | None = None,
         risk_manager: RiskManager | None = None,
     ):
         self.initial_cash = initial_cash
+
         self.execution_model = (
             execution_model
             if execution_model is not None
             else ExecutionModel()
         )
+
+        supplied_multipliers = (
+            contract_multipliers
+            if contract_multipliers is not None
+            else {}
+        )
+
+        self.contract_multipliers = {}
+
+        for symbol, multiplier in (
+            supplied_multipliers.items()
+        ):
+            if (
+                isinstance(multiplier, bool)
+                or not isinstance(
+                    multiplier,
+                    Real,
+                )
+            ):
+                raise TypeError(
+                    "contract multiplier must be "
+                    "a number"
+                )
+
+            if (
+                not isfinite(multiplier)
+                or multiplier <= 0
+            ):
+                raise ValueError(
+                    "contract multiplier must be "
+                    "positive and finite"
+                )
+
+            normalised_symbol = (
+                symbol.strip().upper()
+            )
+
+            if not normalised_symbol:
+                raise ValueError(
+                    "contract multiplier symbol "
+                    "must not be empty"
+                )
+
+            self.contract_multipliers[
+                normalised_symbol
+            ] = float(multiplier)
+
         self.risk_manager = (
             risk_manager
             if risk_manager is not None
@@ -76,7 +131,9 @@ class BacktestEngine:
                 "risk_manager must be a "
                 "RiskManager"
             )
+
         self.current_time: datetime | None = None
+
 
     def run(
         self,
@@ -114,6 +171,10 @@ class BacktestEngine:
                     order,
                     bar,
                     reference_price=bar.open,
+                    contract_multiplier=(
+                        self.contract_multipliers
+                        .get(order.symbol, 1.0)
+                    ),
                 )
 
                 valuation_prices = dict(

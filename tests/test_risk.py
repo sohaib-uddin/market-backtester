@@ -114,3 +114,35 @@ def test_risk_limits_reject_invalid_percentage(
                 percentage
             )
         )
+
+def test_risk_manager_uses_contract_multiplier():
+    portfolio = Portfolio(
+        initial_cash=1_000_000.0
+    )
+
+    manager = RiskManager(
+        RiskLimits(
+            maximum_position_percentage=50.0,
+            maximum_order_percentage=100.0,
+        )
+    )
+
+    futures_fill = Fill(
+        symbol="GC=F",
+        quantity=3,
+        side=OrderSide.BUY,
+        price=2_000.0,
+        timestamp=datetime(2025, 1, 2),
+        commission=0.0,
+        contract_multiplier=100.0,
+    )
+
+    with pytest.raises(
+        RiskViolation,
+        match="position",
+    ):
+        manager.validate_fill(
+            fill=futures_fill,
+            portfolio=portfolio,
+            current_prices={},
+        )

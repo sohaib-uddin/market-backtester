@@ -11,6 +11,7 @@ class Position:
     symbol: str
     quantity: int = 0
     average_entry_price: float = 0.0
+    contract_multiplier: float = 1.0
 
 
 class Portfolio:
@@ -52,9 +53,22 @@ class Portfolio:
             existing_cost = 0.0
         else:
             existing_quantity = existing_position.quantity
+            if (
+                existing_position
+                .contract_multiplier
+                != fill.contract_multiplier
+            ):
+                raise ValueError(
+                    "fill contract multiplier does "
+                    "not match the existing position"
+                )
+
             existing_cost = (
-                existing_position.average_entry_price
+                existing_position
+                .average_entry_price
                 * existing_position.quantity
+                * existing_position
+                .contract_multiplier
             )
 
         new_quantity = existing_quantity + fill.quantity
@@ -68,7 +82,14 @@ class Portfolio:
             symbol=fill.symbol,
             quantity=new_quantity,
             average_entry_price=(
-                new_total_cost / new_quantity
+                new_total_cost
+                / (
+                    new_quantity
+                    * fill.contract_multiplier
+                )
+            ),
+            contract_multiplier=(
+                fill.contract_multiplier
             ),
         )
 
@@ -76,6 +97,17 @@ class Portfolio:
 
     def _apply_sell(self, fill: Fill):
         existing_position = self.positions.get(fill.symbol)
+
+        if (
+            existing_position is not None
+            and existing_position
+            .contract_multiplier
+            != fill.contract_multiplier
+        ):
+            raise ValueError(
+                "fill contract multiplier does "
+                "not match the existing position"
+            )
 
         if (
             existing_position is None
@@ -93,6 +125,8 @@ class Portfolio:
         sold_cost_basis = (
             existing_position.average_entry_price
             * fill.quantity
+            * existing_position
+            .contract_multiplier
         )
 
         realised_profit = (
@@ -117,8 +151,12 @@ class Portfolio:
                 average_entry_price=(
                     existing_position.average_entry_price
                 ),
+                contract_multiplier=(
+                    existing_position
+                    .contract_multiplier
+                ),
             )
-            
+
     def market_value(
         self,
         current_prices: dict[str, float],
@@ -131,7 +169,11 @@ class Portfolio:
                 current_prices,
             )
 
-            total_value += position.quantity * price
+            total_value += (
+                position.quantity
+                * price
+                * position.contract_multiplier
+            )
 
         return total_value
 
@@ -148,8 +190,12 @@ class Portfolio:
             )
 
             total_unrealised_pnl += (
-                price - position.average_entry_price
-            ) * position.quantity
+                price
+                - position.average_entry_price
+            ) * (
+                position.quantity
+                * position.contract_multiplier
+            )
 
         return total_unrealised_pnl
 

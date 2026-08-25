@@ -58,6 +58,17 @@ from backtester.risk import (
     RiskManager,
     RiskViolation,
 )
+from backtester.application import (
+    BacktestApplication,
+    BacktestConfiguration,
+    ResearchRun,
+)
+from backtester.instruments import (
+    AssetClass,
+    Instrument,
+    InstrumentCatalogue,
+    create_default_instrument_catalogue,
+)
 
 
 __all__ = [
@@ -102,4 +113,11 @@ __all__ = [
     "RiskLimits",
     "RiskManager",
     "RiskViolation",
+    "BacktestApplication",
+    "BacktestConfiguration",
+    "ResearchRun",
+    "AssetClass",
+    "Instrument",
+    "InstrumentCatalogue",
+    "create_default_instrument_catalogue",
 ]

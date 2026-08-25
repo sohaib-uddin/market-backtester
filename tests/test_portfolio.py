@@ -13,6 +13,7 @@ def make_fill(
     price,
     side=OrderSide.BUY,
     commission=0.0,
+    contract_multiplier=1.0,
 ):
     return Fill(
         symbol="AAPL",
@@ -21,6 +22,9 @@ def make_fill(
         price=price,
         timestamp=datetime(2025, 1, 2, 9, 31),
         commission=commission,
+        contract_multiplier=(
+            contract_multiplier
+        ),
     )
 
 
@@ -230,3 +234,65 @@ def test_rejected_buy_does_not_change_portfolio():
     assert portfolio.cash == 500.0
     assert portfolio.positions == {}
     assert portfolio.realised_pnl == 0.0
+
+def test_futures_position_uses_contract_multiplier():
+    portfolio = Portfolio(
+        initial_cash=1_000_000.0
+    )
+
+    portfolio.apply_fill(
+        make_fill(
+            quantity=1,
+            price=2_000.0,
+            commission=10.0,
+            contract_multiplier=100.0,
+        )
+    )
+
+    position = portfolio.positions["AAPL"]
+
+    assert position.quantity == 1
+
+    assert position.contract_multiplier == (
+        100.0
+    )
+
+    assert position.average_entry_price == (
+        pytest.approx(2_000.10)
+    )
+
+    assert portfolio.cash == pytest.approx(
+        799_990.0
+    )
+
+    assert portfolio.market_value(
+        {
+            "AAPL": 2_010.0,
+        }
+    ) == pytest.approx(201_000.0)
+
+    assert portfolio.unrealised_pnl(
+        {
+            "AAPL": 2_010.0,
+        }
+    ) == pytest.approx(990.0)
+
+    portfolio.apply_fill(
+        make_fill(
+            quantity=1,
+            price=2_010.0,
+            side=OrderSide.SELL,
+            commission=10.0,
+            contract_multiplier=100.0,
+        )
+    )
+
+    assert portfolio.cash == pytest.approx(
+        1_000_980.0
+    )
+
+    assert portfolio.realised_pnl == (
+        pytest.approx(980.0)
+    )
+
+    assert portfolio.positions == {}

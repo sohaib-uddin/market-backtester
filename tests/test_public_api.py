@@ -40,6 +40,13 @@ from backtester import (
     RiskLimits,
     RiskManager,
     RiskViolation,
+    BacktestApplication,
+    BacktestConfiguration,
+    ResearchRun,
+    AssetClass,
+    Instrument,
+    InstrumentCatalogue,
+    create_default_instrument_catalogue,
     )
 
 
@@ -85,3 +92,10 @@ def test_public_api_exposes_core_components():
     assert RiskLimits is not None
     assert RiskManager is not None
     assert RiskViolation is not None
+    assert BacktestApplication is not None
+    assert BacktestConfiguration is not None
+    assert ResearchRun is not None
+    assert AssetClass is not None
+    assert Instrument is not None
+    assert InstrumentCatalogue is not None
+    assert create_default_instrument_catalogue is not None

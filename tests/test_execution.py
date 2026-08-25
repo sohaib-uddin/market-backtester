@@ -187,3 +187,20 @@ def test_execution_model_accepts_explicit_reference_price():
     )
 
     assert fill.price == pytest.approx(105.105)
+
+def test_fill_applies_contract_multiplier():
+    fill = Fill(
+        symbol="GC=F",
+        quantity=2,
+        side=OrderSide.BUY,
+        price=2_000.0,
+        timestamp=datetime(2025, 1, 2),
+        commission=5.0,
+        contract_multiplier=100.0,
+    )
+
+    assert fill.contract_multiplier == 100.0
+
+    assert fill.gross_value == pytest.approx(
+        400_000.0
+    )

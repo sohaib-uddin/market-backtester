@@ -15,6 +15,7 @@ class Fill:
     price: float
     timestamp: datetime
     commission: float = 0.0
+    contract_multiplier: float = 1.0
 
     def __post_init__(self):
         normalised_symbol = self.symbol.strip().upper()
@@ -56,6 +57,35 @@ class Fill:
             raise ValueError(
                 "commission must be non-negative and finite"
             )
+        
+        if isinstance(
+            self.contract_multiplier,
+            bool,
+        ):
+            raise TypeError(
+                "contract_multiplier must be "
+                "a number"
+            )
+
+        if not isinstance(
+            self.contract_multiplier,
+            Real,
+        ):
+            raise TypeError(
+                "contract_multiplier must be "
+                "a number"
+            )
+
+        if (
+            not isfinite(
+                self.contract_multiplier
+            )
+            or self.contract_multiplier <= 0
+        ):
+            raise ValueError(
+                "contract_multiplier must be "
+                "positive and finite"
+            )
 
         object.__setattr__(
             self,
@@ -65,7 +95,11 @@ class Fill:
 
     @property
     def gross_value(self) -> float:
-        return self.price * self.quantity
+        return (
+            self.price
+            * self.quantity
+            * self.contract_multiplier
+        )
 
 @dataclass(frozen=True)
 class ExecutionModel:
@@ -97,12 +131,14 @@ class ExecutionModel:
         if value < 0:
             raise ValueError(f"{name} must not be negative")
 
+
     def execute(
         self,
         order: Order,
         bar: Bar,
         *,
         reference_price: float | None = None,
+        contract_multiplier: float = 1.0,
     ) -> Fill:
         if order.symbol != bar.symbol:
             raise ValueError(
@@ -152,4 +188,7 @@ class ExecutionModel:
             price=execution_price,
             timestamp=bar.timestamp,
             commission=self.commission_per_order,
+            contract_multiplier=(
+                contract_multiplier
+            ),
         )

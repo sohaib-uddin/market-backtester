@@ -143,10 +143,27 @@ class RiskManager:
             else 0
         )
 
-        projected_position_value = (
+        existing_position_value = (
             existing_quantity
-            + fill.quantity
-        ) * fill.price
+            * fill.price
+            * (
+                existing_position
+                .contract_multiplier
+                if existing_position is not None
+                else 1.0
+            )
+        )
+
+        new_fill_value = (
+            fill.quantity
+            * fill.price
+            * fill.contract_multiplier
+        )
+
+        projected_position_value = (
+            existing_position_value
+            + new_fill_value
+        )
 
         maximum_position_value = (
             equity
